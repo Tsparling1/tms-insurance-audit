@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Insurance Coverage Audit | TMS Solutions Group</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #FAFAF7;
+      font-family: 'Inter', sans-serif;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: #1a1a1a;
+      color: #FAFAF7;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    header .brand { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #B8860B; }
+    header .contact { font-size: 0.8rem; color: #aaa; }
+
+    main {
+      flex: 1;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      background: #B8860B;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+    }
+
+    /* Hero */
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      line-height: 1.25;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+    }
+    .hero-bullets { list-style: none; margin-bottom: 32px; }
+    .hero-bullets li {
+      padding: 5px 0 5px 24px;
+      position: relative;
+      color: #444;
+      font-size: 0.95rem;
+    }
+    .hero-bullets li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 12px;
+      width: 10px; height: 10px;
+      background: #B8860B;
+      border-radius: 50%;
+    }
+
+    /* Step indicator */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 28px;
+    }
+    .step-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 700;
+      background: #e0ddd6; color: #888;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    .step-dot.active { background: #B8860B; color: #fff; }
+    .step-dot.done   { background: #27AE60; color: #fff; }
+    .step-line {
+      flex: 1; height: 3px;
+      background: #e0ddd6;
+      transition: background 0.3s;
+    }
+    .step-line.done { background: #27AE60; }
+    .step-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      margin-bottom: 24px;
+      font-size: 0.78rem;
+      color: #888;
+    }
+    .step-labels span.active { color: #B8860B; font-weight: 600; }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 32px 36px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 540px) {
+      .card { padding: 22px 18px; }
+      .hero-title { font-size: 1.7rem; }
+    }
+
+    .section-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #B8860B;
+    }
+
+    /* Form elements */
+    .form-group { margin-bottom: 20px; }
+    label.field-label {
+      display: block;
+      font-size: 0.88rem; font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+    label.field-label .opt { font-weight: 400; color: #999; font-size: 0.8rem; }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: #1a1a1a;
+      background: #fafaf7;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+    input[type="text"]:focus, select:focus {
+      outline: none; border-color: #B8860B;
+    }
+
+    .radio-group { display: flex; gap: 16px; flex-wrap: wrap; }
+    .radio-opt {
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer; font-size: 0.92rem; color: #333;
+    }
+    .radio-opt input[type="radio"] {
+      width: 18px; height: 18px; accent-color: #B8860B;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 24px;
+    }
+    @media (max-width: 540px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .form-grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 24px;
+    }
+    @media (max-width: 540px) { .form-grid-4 { grid-template-columns: 1fr; } }
+
+    /* Coverage rows */
+    .coverage-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0ede5;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .coverage-row:last-child { border-bottom: none; }
+    .coverage-info { flex: 1; min-width: 180px; }
+    .coverage-name { font-weight: 600; font-size: 0.92rem; color: #1a1a1a; margin-bottom: 2px; }
+    .coverage-desc { font-size: 0.78rem; color: #888; line-height: 1.4; }
+    .coverage-radios {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .cov-radio-btn {
+      padding: 6px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 20px;
+      font-size: 0.8rem; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #fff;
+      color: #666;
+      white-space: nowrap;
+    }
+    .cov-radio-btn.selected-yes  { background: #d4edda; border-color: #27AE60; color: #155724; }
+    .cov-radio-btn.selected-no   { background: #f8d7da; border-color: #C0392B; color: #721c24; }
+    .cov-radio-btn.selected-ns   { background: #fff3cd; border-color: #E67E22; color: #856404; }
+
+    /* Buttons */
+    .cta-btn {
+      display: block; width: 100%;
+      padding: 16px;
+      background: #B8860B; color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      letter-spacing: 0.5px;
+      border: none; border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+    .cta-btn:hover { background: #9a7009; transform: translateY(-1px); }
+    .back-btn {
+      display: inline-block;
+      padding: 11px 28px;
+      background: transparent; color: #888;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem; font-weight: 500;
+      border: 1.5px solid #ddd; border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      margin-bottom: 16px;
+    }
+    .back-btn:hover { border-color: #B8860B; color: #B8860B; }
+    .no-signup {
+      text-align: center; font-size: 0.8rem; color: #888; margin-top: 10px;
+    }
+
+    /* Results */
+    #results { display: none; }
+
+    /* Score ring */
+    .score-section {
+      text-align: center;
+      padding: 32px 20px 24px;
+    }
+    .score-ring-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .score-ring { width: 160px; height: 160px; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: #f0ede5; stroke-width: 14; }
+    .ring-fill { fill: none; stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+    .score-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+    .score-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #1a1a1a;
+    }
+    .score-denom { font-size: 0.8rem; color: #aaa; margin-top: 2px; }
+    .score-label {
+      font-size: 1rem; font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+    .score-sublabel { font-size: 0.88rem; color: #666; margin-top: 6px; }
+
+    /* Profile chips */
+    .profile-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .chip {
+      background: #f0ede5;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.78rem; font-weight: 600;
+      color: #555;
+    }
+
+    /* Coverage status grid */
+    .cov-status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 540px) { .cov-status-grid { grid-template-columns: repeat(2, 1fr); } }
+    .cov-status-item {
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 10px 8px;
+      text-align: center;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    }
+    .cov-status-name { font-size: 0.72rem; font-weight: 600; color: #444; margin-bottom: 4px; line-height: 1.3; }
+    .cov-status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .badge-covered { background: #d4edda; color: #155724; }
+    .badge-gap     { background: #f8d7da; color: #721c24; }
+    .badge-unclear { background: #fff3cd; color: #856404; }
+    .badge-na      { background: #f0ede5; color: #888; }
+
+    /* Gaps list */
+    .gaps-section { margin-bottom: 24px; }
+    .gaps-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #B8860B;
+    }
+    .gap-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      border-left: 5px solid #ddd;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .gap-card.priority-high   { border-left-color: #C0392B; }
+    .gap-card.priority-medium { border-left-color: #E67E22; }
+    .gap-card.priority-low    { border-left-color: #27AE60; }
+    .gap-card.gap-unclear     { opacity: 0.85; }
+    .gap-main { flex: 1; }
+    .gap-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; }
+    .gap-title { font-weight: 700; font-size: 0.95rem; color: #1a1a1a; }
+    .priority-badge {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.8px;
+      padding: 2px 8px; border-radius: 10px;
+    }
+    .p-high   { background: #f8d7da; color: #721c24; }
+    .p-medium { background: #fff3cd; color: #856404; }
+    .p-low    { background: #d4edda; color: #155724; }
+    .gap-type-badge {
+      font-size: 0.68rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 10px;
+    }
+    .gt-gap     { background: #f8d7da; color: #721c24; }
+    .gt-unclear { background: #fff3cd; color: #856404; }
+    .gap-desc { font-size: 0.84rem; color: #555; line-height: 1.6; margin-bottom: 6px; }
+    .gap-premium {
+      font-size: 0.8rem; font-weight: 600;
+      color: #B8860B;
+    }
+    .gap-premium span { font-weight: 400; color: #888; }
+
+    /* Overpaying alert */
+    .overpaying-alert {
+      background: #fff8e1;
+      border: 2px solid #E67E22;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
+    .overpaying-alert h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: #a05c00;
+      margin-bottom: 10px;
+    }
+    .overpaying-alert ul {
+      list-style: none;
+      padding: 0;
+    }
+    .overpaying-alert ul li {
+      font-size: 0.86rem;
+      color: #555;
+      padding: 5px 0 5px 20px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .overpaying-alert ul li::before {
+      content: '!!';
+      position: absolute; left: 0;
+      color: #E67E22; font-weight: 700; font-size: 0.78rem;
+    }
+
+    /* Top 3 actions */
+    .actions-section { margin-bottom: 24px; }
+    .actions-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #B8860B;
+    }
+    .action-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .action-num {
+      width: 32px; height: 32px;
+      background: #1a1a1a;
+      color: #B8860B;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .action-content { flex: 1; }
+    .action-title { font-weight: 700; font-size: 0.95rem; color: #1a1a1a; margin-bottom: 4px; }
+    .action-desc { font-size: 0.84rem; color: #555; line-height: 1.6; }
+
+    /* Disclaimer */
+    .disclaimer {
+      font-size: 0.78rem; color: #999; line-height: 1.6;
+      padding: 14px 16px;
+      background: #f5f3ef;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    /* PDF / Reset buttons */
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .pdf-btn {
+      padding: 14px 32px;
+      background: #1a1a1a; color: #B8860B;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      border: none; border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .pdf-btn:hover { background: #333; }
+    .reset-btn {
+      padding: 14px 28px;
+      background: transparent; color: #888;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem; font-weight: 500;
+      border: 1.5px solid #ddd; border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .reset-btn:hover { border-color: #B8860B; color: #B8860B; }
+
+    /* Error */
+    .error-msg { color: #C0392B; font-size: 0.82rem; margin-top: 4px; display: none; }
+
+    /* All covered banner */
+    .all-covered-banner {
+      background: #d4edda; border: 2px solid #27AE60;
+      border-radius: 10px; padding: 18px 20px;
+      margin-bottom: 24px; text-align: center;
+    }
+    .all-covered-banner p { font-size: 0.92rem; color: #155724; line-height: 1.6; }
+
+    footer {
+      background: #1a1a1a; color: #888;
+      text-align: center; padding: 14px 20px;
+      font-size: 0.8rem;
+    }
+    footer a { color: #B8860B; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">TMS Solutions Group</div>
+  <div class="contact">tom@tms-solutions-group.com &nbsp;|&nbsp; 386-387-8620</div>
+</header>
+
+<main>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LANDING / HERO (shown before step indicator appears)
+  ═══════════════════════════════════════════════════════════ -->
+  <div id="hero-section">
+    <div class="badge">Free Assessment Tool</div>
+    <h1 class="hero-title">Business Insurance<br>Coverage Audit</h1>
+    <ul class="hero-bullets">
+      <li>Identify dangerous coverage gaps before a claim catches you exposed</li>
+      <li>See which policies your business profile actually requires</li>
+      <li>Get estimated premium ranges and your top 3 priority actions</li>
+    </ul>
+  </div>
+
+  <!-- Step indicator -->
+  <div id="step-indicator" style="display:none;">
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-1">1</div>
+      <div class="step-line" id="line-1"></div>
+      <div class="step-dot" id="dot-2">2</div>
+    </div>
+    <div class="step-labels">
+      <span id="lbl-1" class="active">Business Profile</span>
+      <span id="lbl-2">Coverage Inventory</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       STEP 1 — BUSINESS PROFILE
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="step1">
+    <div class="card">
+      <div class="section-label">Business Profile</div>
+
+      <div class="form-group">
+        <label class="field-label" for="biz-name">Business Name <span class="opt">(optional)</span></label>
+        <input type="text" id="biz-name" placeholder="Your Business Name" />
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="field-label" for="industry">Industry Type</label>
+          <select id="industry">
+            <option value="">-- Select Industry --</option>
+            <option value="retail">Retail</option>
+            <option value="restaurant">Restaurant / Food Service</option>
+            <option value="contractor">Contractor / Trades</option>
+            <option value="professional_services">Professional Services</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="other">Other</option>
+          </select>
+          <span class="error-msg" id="err-industry">Please select your industry.</span>
+        </div>
+        <div class="form-group">
+          <label class="field-label" for="emp-tier">Number of Employees</label>
+          <select id="emp-tier">
+            <option value="">-- Select --</option>
+            <option value="1">1 (Solo / Owner Only)</option>
+            <option value="2_4">2 - 4</option>
+            <option value="5_10">5 - 10</option>
+            <option value="11_25">11 - 25</option>
+            <option value="26_50">26 - 50</option>
+            <option value="50plus">50+</option>
+          </select>
+          <span class="error-msg" id="err-emp">Please select employee count.</span>
+        </div>
+        <div class="form-group">
+          <label class="field-label" for="rev-tier">Annual Revenue Range</label>
+          <select id="rev-tier">
+            <option value="">-- Select --</option>
+            <option value="under100k">Under $100,000</option>
+            <option value="100k_500k">$100,000 - $500,000</option>
+            <option value="500k_1m">$500,000 - $1,000,000</option>
+            <option value="1m_5m">$1,000,000 - $5,000,000</option>
+            <option value="5m_plus">$5,000,000+</option>
+          </select>
+          <span class="error-msg" id="err-rev">Please select revenue range.</span>
+        </div>
+      </div>
+
+      <div class="form-grid-4" style="margin-top:8px;">
+        <div class="form-group">
+          <label class="field-label">Physical Business Location?</label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="has-location" value="yes" /> Yes</label>
+            <label class="radio-opt"><input type="radio" name="has-location" value="no" checked /> No</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Handle Customer Data / PII?</label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="handles-data" value="yes" /> Yes</label>
+            <label class="radio-opt"><input type="radio" name="handles-data" value="no" checked /> No</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Own or Use Business Vehicles?</label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="has-vehicles" value="yes" /> Yes</label>
+            <label class="radio-opt"><input type="radio" name="has-vehicles" value="no" checked /> No</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Use Subcontractors / 1099s?</label>
+          <div class="radio-group">
+            <label class="radio-opt"><input type="radio" name="has-contractors" value="yes" /> Yes</label>
+            <label class="radio-opt"><input type="radio" name="has-contractors" value="no" checked /> No</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="cta-btn" onclick="goToStep2()">Next: Review Your Coverage &rarr;</button>
+    <p class="no-signup">No sign-up required. Results shown instantly.</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       STEP 2 — COVERAGE INVENTORY
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="step2" style="display:none;">
+    <button class="back-btn" onclick="goBack()">&larr; Back to Profile</button>
+    <div class="card">
+      <div class="section-label">Current Coverage Inventory</div>
+      <p style="font-size:0.88rem;color:#666;margin-bottom:20px;line-height:1.6;">For each coverage type below, indicate whether your business currently has it. Answer honestly — "Not Sure" is a valid answer and will be flagged for review.</p>
+
+      <div id="coverage-rows"></div>
+    </div>
+
+    <button class="cta-btn" onclick="runAudit()">Run My Coverage Audit</button>
+    <p class="no-signup">Instant results. No sign-up required.</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       RESULTS
+  ═══════════════════════════════════════════════════════════ -->
+  <section id="results">
+
+    <!-- Score Ring -->
+    <div class="card" style="padding-bottom:12px;">
+      <div class="score-section">
+        <div class="score-ring-wrap">
+          <svg class="score-ring" viewBox="0 0 180 180">
+            <circle class="ring-bg" cx="90" cy="90" r="72" />
+            <circle class="ring-fill" id="ring-fill" cx="90" cy="90" r="72"
+              stroke-dasharray="452.39"
+              stroke-dashoffset="452.39" />
+          </svg>
+          <div class="score-center">
+            <div class="score-num" id="score-num">0</div>
+            <div class="score-denom">/ 100</div>
+          </div>
+        </div>
+        <div class="score-label" id="score-label">Calculating...</div>
+        <div class="score-sublabel" id="score-sublabel"></div>
+      </div>
+
+      <!-- Profile chips -->
+      <div class="profile-chips" id="profile-chips"></div>
+    </div>
+
+    <!-- Coverage Status Grid -->
+    <div class="card">
+      <div class="section-label">Coverage Status Overview</div>
+      <div class="cov-status-grid" id="cov-status-grid"></div>
+    </div>
+
+    <!-- Overpaying Alert -->
+    <div class="overpaying-alert" id="overpaying-alert" style="display:none;">
+      <h3>!! Possible Overpaying Alert</h3>
+      <ul id="overpaying-list"></ul>
+    </div>
+
+    <!-- All Covered Banner (shown if no gaps) -->
+    <div class="all-covered-banner" id="all-covered-banner" style="display:none;">
+      <p><strong>Strong coverage profile.</strong> Based on your inputs, you appear to have the key coverages for your business profile in place. Review the status grid above and confirm details with your broker to ensure limits and exclusions are appropriate.</p>
+    </div>
+
+    <!-- Gaps List -->
+    <div class="gaps-section" id="gaps-section" style="display:none;">
+      <h3>Coverage Gaps &amp; Uncertainties</h3>
+      <div id="gaps-list"></div>
+    </div>
+
+    <!-- Top 3 Actions -->
+    <div class="actions-section" id="actions-section" style="display:none;">
+      <h3>Top 3 Recommended Actions</h3>
+      <div id="actions-list"></div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This audit is for educational and informational purposes only. Results are based solely on self-reported inputs and do not constitute insurance advice or a coverage analysis. Actual coverage requirements, exclusions, and premium costs vary significantly by state, industry, carrier, and individual business circumstances. This tool does not replace the advice of a licensed insurance broker or agent. Please consult a qualified insurance professional before making any coverage decisions.
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-row">
+      <button class="pdf-btn" onclick="generatePDF()">Download PDF Report</button>
+      <button class="reset-btn" onclick="resetAudit()">Start Over</button>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  tom@tms-solutions-group.com &nbsp;|&nbsp; <a href="https://tms-solutions-group.com">tms-solutions-group.com</a> &nbsp;|&nbsp; 386-387-8620
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA DEFINITIONS
+// ═══════════════════════════════════════════════════════════
+
+const COVERAGES = [
+  {
+    id: 'general_liability',
+    name: 'General Liability',
+    desc: 'Third-party bodily injury, property damage, and advertising injury'
+  },
+  {
+    id: 'bop',
+    name: 'Business Owners Policy (BOP)',
+    desc: 'Combines general liability and commercial property coverage'
+  },
+  {
+    id: 'workers_comp',
+    name: 'Workers Compensation',
+    desc: 'Medical costs and lost wages for injured employees; required in most states'
+  },
+  {
+    id: 'commercial_auto',
+    name: 'Commercial Auto',
+    desc: 'Vehicles used for business purposes (personal policies exclude business use)'
+  },
+  {
+    id: 'professional_liability',
+    name: 'Professional Liability / E&O',
+    desc: 'Claims that your professional advice or services caused financial harm'
+  },
+  {
+    id: 'cyber',
+    name: 'Cyber Liability',
+    desc: 'Data breaches, cyberattacks, and customer notification costs'
+  },
+  {
+    id: 'epli',
+    name: 'Employment Practices Liability (EPLI)',
+    desc: 'Wrongful termination, discrimination, harassment, and wage claims'
+  },
+  {
+    id: 'umbrella',
+    name: 'Umbrella / Excess Liability',
+    desc: 'Additional coverage layer above your underlying policy limits'
+  }
+];
+
+const PREMIUM_RANGES = {
+  general_liability:    { solo: '$400 - $900/yr',    small: '$600 - $1,500/yr', medium: '$1,000 - $3,000/yr', large: '$2,000 - $6,000/yr' },
+  bop:                  { solo: '$500 - $1,500/yr',  small: '$900 - $2,500/yr', medium: '$1,500 - $4,500/yr', large: '$3,000 - $9,000/yr' },
+  workers_comp:         { solo: '$300 - $800/yr',    small: '$1,000 - $4,000/yr', medium: '$3,500 - $12,000/yr', large: '$10,000 - $35,000/yr' },
+  commercial_auto:      { solo: '$1,200 - $2,500/yr',small: '$2,000 - $5,000/yr', medium: '$4,000 - $10,000/yr', large: '$8,000 - $20,000/yr' },
+  professional_liability:{ solo: '$800 - $2,000/yr', small: '$1,200 - $3,500/yr', medium: '$2,500 - $7,000/yr', large: '$5,000 - $15,000/yr' },
+  cyber:                { solo: '$500 - $1,500/yr',  small: '$800 - $2,500/yr', medium: '$1,500 - $5,000/yr', large: '$3,000 - $10,000/yr' },
+  epli:                 { solo: '$600 - $1,500/yr',  small: '$900 - $2,500/yr', medium: '$2,000 - $5,500/yr', large: '$4,000 - $12,000/yr' },
+  umbrella:             { solo: '$300 - $700/yr',    small: '$400 - $1,000/yr', medium: '$600 - $1,800/yr', large: '$1,000 - $3,500/yr' }
+};
+
+const GAP_DESCRIPTIONS = {
+  general_liability: {
+    HIGH:   'General Liability is the foundation of any business insurance program. Without it, a single slip-and-fall, property damage claim, or advertising injury allegation could result in out-of-pocket legal costs in the tens of thousands.',
+    MEDIUM: 'Even home-based businesses face third-party liability exposure. A client visiting your home office, a product you sell, or an online ad claim can trigger significant liability without GL coverage.',
+    LOW:    'General Liability provides baseline protection against common third-party claims. Recommended for all businesses regardless of size.'
+  },
+  bop: {
+    HIGH:   'A BOP bundles General Liability with commercial property coverage, protecting your physical location, equipment, and inventory. Losing either without insurance can shut a small business down.',
+    MEDIUM: 'Even without a storefront, a BOP may cover your business equipment, loss of income, and liability in one affordable package. Often cheaper than buying policies separately.',
+    LOW:    'A BOP can consolidate coverage efficiently for businesses with property or equipment to protect.'
+  },
+  workers_comp: {
+    HIGH:   'Workers Compensation is legally required in most states for businesses with employees. Failure to carry it can result in state fines, personal liability for injury claims, and lawsuits that bypass normal liability protections.',
+    MEDIUM: 'Depending on your state and employee count, Workers Comp may be required. Even where optional, it protects against costly employee injury claims that General Liability does not cover.',
+    LOW:    'While not required for sole operators in most states, Workers Comp protects against personal injury costs if you are injured on the job.'
+  },
+  commercial_auto: {
+    HIGH:   'Personal auto policies explicitly exclude business use. If an employee or owner is in an accident while driving for business purposes, a personal policy will deny the claim, leaving your business fully exposed to vehicle liability.',
+    MEDIUM: 'If any vehicle is used for deliveries, client visits, or business errands, commercial auto coverage is essential. Even occasional business use can void a personal policy claim.',
+    LOW:    'If you ever use a personal vehicle for business purposes, verify your personal policy does not exclude business use - many do.'
+  },
+  professional_liability: {
+    HIGH:   'Professional Liability (E&O) is critical for service-based businesses. A client claiming your advice, design, or service caused financial harm can result in a lawsuit even if you did everything correctly. Defense costs alone average $30,000+.',
+    MEDIUM: 'Even non-professional service businesses face E&O exposure. If a client believes your work caused them harm, a professional liability policy covers defense and settlements.',
+    LOW:    'Consider Professional Liability if you provide any advice, consulting, or professional services to clients, even informally.'
+  },
+  cyber: {
+    HIGH:   'With customer data in your systems, a breach could trigger regulatory notification requirements, credit monitoring costs, and customer lawsuits. The average small business cyber incident costs $25,000 - $100,000+ to resolve without insurance.',
+    MEDIUM: 'Even businesses without sensitive data face ransomware and business email compromise. A cyber policy covers recovery costs, ransom payments, and business interruption from a cyberattack.',
+    LOW:    'Cyber threats affect businesses of all sizes. As you grow and digitize operations, cyber insurance becomes increasingly important.'
+  },
+  epli: {
+    HIGH:   'The average EPLI claim costs over $200,000 to defend and settle, even when the employer is not at fault. With 5+ employees, the risk of a discrimination, harassment, or wrongful termination claim increases significantly.',
+    MEDIUM: 'Even with a small team, a single disgruntled employee can file a claim alleging unfair treatment. EPLI covers attorney fees and settlements that your GL policy explicitly excludes.',
+    LOW:    'As your workforce grows, EPLI becomes a critical coverage. Consider adding it before your first hire, as it is much cheaper to obtain before a claim history exists.'
+  },
+  umbrella: {
+    HIGH:   'As your revenue and exposure grows, your underlying policy limits may not be sufficient for a serious claim. An umbrella policy adds $1M+ in additional coverage for pennies on the dollar compared to increasing individual policy limits.',
+    MEDIUM: 'An umbrella policy is one of the most cost-effective ways to increase overall coverage limits. For the premium cost, it provides substantial additional protection if a major claim exceeds your primary policy limits.',
+    LOW:    'An umbrella policy is worth considering as your business grows and liability exposure increases. It is typically one of the least expensive ways to significantly increase overall coverage.'
+  }
+};
+
+const ACTION_DETAILS = {
+  general_liability:     'Contact a licensed insurance broker this week to obtain General Liability coverage. This is the most urgent coverage gap for any business. A basic GL policy can often be quoted and bound within 24-48 hours.',
+  bop:                   'Ask your insurance broker about a Business Owners Policy (BOP) to bundle property and liability coverage. BOPs are typically less expensive than purchasing policies separately and are designed specifically for small and mid-sized businesses.',
+  workers_comp:          'Contact your state workers compensation board or a licensed broker immediately. Operating without required Workers Comp exposes you to state penalties and unlimited personal liability for employee injuries. This cannot wait.',
+  commercial_auto:       'Call your auto insurance carrier or a commercial lines broker to add a Commercial Auto policy for any vehicles used in your business. Do not wait until after an accident to discover your personal policy denies the claim.',
+  professional_liability:'Request a Professional Liability / E&O quote from a broker who specializes in your industry. These policies are tailored by profession and are often more affordable than expected, especially when purchased before any claims history.',
+  cyber:                 'Obtain a Cyber Liability policy and simultaneously implement basic cyber hygiene: multi-factor authentication, employee phishing training, and regular data backups. Insurance and prevention together dramatically reduce your cyber risk profile.',
+  epli:                  'Add Employment Practices Liability Insurance and pair it with a documented HR policy handbook. Having written policies for hiring, termination, and workplace conduct reduces both your claim risk and your premium costs.',
+  umbrella:              'Request an Umbrella/Excess Liability quote from your current carrier - they often offer preferred pricing for existing customers. For most small businesses, an additional $1M in umbrella coverage costs $300-$700 per year.'
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+
+let profileData = {};
+let coverageData = {};
+let auditResults = {};
+
+// ═══════════════════════════════════════════════════════════
+// STEP NAVIGATION
+// ═══════════════════════════════════════════════════════════
+
+function goToStep2() {
+  // Validate Step 1
+  let valid = true;
+  document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
+
+  const industry = document.getElementById('industry').value;
+  const empTier  = document.getElementById('emp-tier').value;
+  const revTier  = document.getElementById('rev-tier').value;
+
+  if (!industry) { document.getElementById('err-industry').style.display = 'block'; valid = false; }
+  if (!empTier)  { document.getElementById('err-emp').style.display = 'block'; valid = false; }
+  if (!revTier)  { document.getElementById('err-rev').style.display = 'block'; valid = false; }
+  if (!valid) return;
+
+  // Capture profile
+  profileData = {
+    bizName:      document.getElementById('biz-name').value.trim(),
+    industry,
+    empTier,
+    revTier,
+    hasLocation:  document.querySelector('input[name="has-location"]:checked').value === 'yes',
+    handlesData:  document.querySelector('input[name="handles-data"]:checked').value === 'yes',
+    hasVehicles:  document.querySelector('input[name="has-vehicles"]:checked').value === 'yes',
+    hasContractors: document.querySelector('input[name="has-contractors"]:checked').value === 'yes'
+  };
+
+  buildCoverageRows();
+
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('hero-section').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+  document.getElementById('step-indicator').style.display = 'block';
+  updateStepUI(2);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack() {
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('hero-section').style.display = 'block';
+  document.getElementById('step-indicator').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateStepUI(step) {
+  const dot1 = document.getElementById('dot-1');
+  const dot2 = document.getElementById('dot-2');
+  const line1 = document.getElementById('line-1');
+  const lbl1  = document.getElementById('lbl-1');
+  const lbl2  = document.getElementById('lbl-2');
+
+  if (step === 2) {
+    dot1.classList.remove('active'); dot1.classList.add('done');
+    dot2.classList.add('active');
+    line1.classList.add('done');
+    lbl1.classList.remove('active');
+    lbl2.classList.add('active');
+  }
+}
+
+function resetAudit() {
+  // Reset form
+  document.getElementById('biz-name').value = '';
+  document.getElementById('industry').value = '';
+  document.getElementById('emp-tier').value = '';
+  document.getElementById('rev-tier').value = '';
+  document.querySelectorAll('input[name="has-location"]')[1].checked = true;
+  document.querySelectorAll('input[name="handles-data"]')[1].checked = true;
+  document.querySelectorAll('input[name="has-vehicles"]')[1].checked = true;
+  document.querySelectorAll('input[name="has-contractors"]')[1].checked = true;
+
+  document.getElementById('step-indicator').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('hero-section').style.display = 'block';
+
+  // Reset step dots
+  const dot1 = document.getElementById('dot-1');
+  const dot2 = document.getElementById('dot-2');
+  dot1.classList.remove('done'); dot1.classList.add('active');
+  dot2.classList.remove('active');
+  document.getElementById('line-1').classList.remove('done');
+  document.getElementById('lbl-1').classList.add('active');
+  document.getElementById('lbl-2').classList.remove('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════════════════
+// COVERAGE ROWS
+// ═══════════════════════════════════════════════════════════
+
+coverageData = {};
+
+function buildCoverageRows() {
+  coverageData = {};
+  COVERAGES.forEach(c => { coverageData[c.id] = null; });
+
+  const container = document.getElementById('coverage-rows');
+  container.innerHTML = '';
+
+  COVERAGES.forEach(cov => {
+    const row = document.createElement('div');
+    row.className = 'coverage-row';
+    row.innerHTML = `
+      <div class="coverage-info">
+        <div class="coverage-name">${cov.name}</div>
+        <div class="coverage-desc">${cov.desc}</div>
+      </div>
+      <div class="coverage-radios">
+        <button class="cov-radio-btn" data-cov="${cov.id}" data-val="yes" onclick="selectCoverage('${cov.id}','yes',this)">Yes</button>
+        <button class="cov-radio-btn" data-cov="${cov.id}" data-val="no" onclick="selectCoverage('${cov.id}','no',this)">No</button>
+        <button class="cov-radio-btn" data-cov="${cov.id}" data-val="not_sure" onclick="selectCoverage('${cov.id}','not_sure',this)">Not Sure</button>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function selectCoverage(covId, val, btn) {
+  coverageData[covId] = val;
+  const allBtns = document.querySelectorAll(`[data-cov="${covId}"]`);
+  allBtns.forEach(b => { b.classList.remove('selected-yes','selected-no','selected-ns'); });
+  if (val === 'yes')      btn.classList.add('selected-yes');
+  else if (val === 'no')  btn.classList.add('selected-no');
+  else                    btn.classList.add('selected-ns');
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCORING LOGIC
+// ═══════════════════════════════════════════════════════════
+
+function getSizeTier(empTier) {
+  if (empTier === '1') return 'solo';
+  if (empTier === '2_4') return 'small';
+  if (empTier === '5_10' || empTier === '11_25') return 'medium';
+  return 'large';
+}
+
+function isProServices(industry) {
+  return ['professional_services','healthcare','contractor'].includes(industry);
+}
+
+function hasFiveOrMore(empTier) {
+  return ['5_10','11_25','26_50','50plus'].includes(empTier);
+}
+
+function hasTenOrMore(empTier) {
+  return ['11_25','26_50','50plus'].includes(empTier);
+}
+
+function isHighRevenue(revTier) {
+  return ['500k_1m','1m_5m','5m_plus'].includes(revTier);
+}
+
+function determinePriority(covId, profile) {
+  const { industry, empTier, revTier, hasLocation, handlesData, hasVehicles } = profile;
+  const solo = empTier === '1';
+  const multiEmp = empTier !== '1';
+
+  switch (covId) {
+    case 'general_liability':
+      return 'HIGH';
+
+    case 'bop':
+      return hasLocation ? 'HIGH' : 'MEDIUM';
+
+    case 'workers_comp':
+      if (solo) return 'LOW';
+      return hasFiveOrMore(empTier) ? 'HIGH' : 'MEDIUM';
+
+    case 'commercial_auto':
+      if (hasVehicles) return 'HIGH';
+      return 'LOW';
+
+    case 'professional_liability':
+      return isProServices(industry) ? 'HIGH' : 'MEDIUM';
+
+    case 'cyber':
+      return handlesData ? 'HIGH' : 'MEDIUM';
+
+    case 'epli':
+      if (solo) return 'LOW';
+      if (hasFiveOrMore(empTier)) return 'HIGH';
+      return 'MEDIUM';
+
+    case 'umbrella':
+      if (isHighRevenue(revTier) || hasTenOrMore(empTier)) return 'MEDIUM';
+      return 'LOW';
+
+    default:
+      return 'MEDIUM';
+  }
+}
+
+function calculateScore(priorities, coverages) {
+  const relevant = COVERAGES.filter(c => priorities[c.id] !== 'LOW');
+  if (relevant.length === 0) return 100;
+
+  let covered = 0;
+  relevant.forEach(c => {
+    if (coverages[c.id] === 'yes') covered += 1;
+    else if (coverages[c.id] === 'not_sure') covered += 0.5;
+  });
+
+  return Math.min(100, Math.max(0, Math.round((covered / relevant.length) * 100)));
+}
+
+function checkOverpaying(coverages, profile) {
+  const alerts = [];
+  if (coverages.commercial_auto === 'yes' && !profile.hasVehicles) {
+    alerts.push('You have Commercial Auto insurance but indicated you do not own or use business vehicles. You may be paying for coverage that does not apply to your operations.');
+  }
+  if (coverages.workers_comp === 'yes' && profile.empTier === '1') {
+    alerts.push('You have Workers Compensation but are a sole operator with no employees. Most states do not require this for sole proprietors. You may be able to waive or reduce this coverage.');
+  }
+  if (coverages.epli === 'yes' && profile.empTier === '1') {
+    alerts.push('Employment Practices Liability (EPLI) is generally unnecessary for solo operators with no employees. This may be an avoidable expense worth reviewing with your broker.');
+  }
+  if (coverages.bop === 'yes' && !profile.hasLocation) {
+    alerts.push('You have a Business Owners Policy (BOP) but no physical business location. Depending on your policy, you may be paying for commercial property coverage that provides minimal benefit. Ask your broker if a standalone GL policy is more cost-effective.');
+  }
+  return alerts;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RUN AUDIT
+// ═══════════════════════════════════════════════════════════
+
+function runAudit() {
+  // Check all coverages answered
+  const unanswered = COVERAGES.filter(c => coverageData[c.id] === null);
+  if (unanswered.length > 0) {
+    alert('Please answer all coverage questions before running the audit. You can select "Not Sure" if you are unsure.');
+    return;
+  }
+
+  // Calculate priorities
+  const priorities = {};
+  COVERAGES.forEach(c => {
+    priorities[c.id] = determinePriority(c.id, profileData);
+  });
+
+  // Score
+  const score = calculateScore(priorities, coverageData);
+
+  // Gaps: coverages where answer is 'no' or 'not_sure' AND not LOW priority
+  const gaps = COVERAGES
+    .filter(c => priorities[c.id] !== 'LOW' && coverageData[c.id] !== 'yes')
+    .map(c => ({
+      ...c,
+      priority: priorities[c.id],
+      status: coverageData[c.id], // 'no' or 'not_sure'
+      premiumRange: PREMIUM_RANGES[c.id][getSizeTier(profileData.empTier)],
+      description: GAP_DESCRIPTIONS[c.id][priorities[c.id]]
+    }))
+    .sort((a, b) => {
+      const order = { HIGH: 0, MEDIUM: 1, LOW: 2 };
+      return order[a.priority] - order[b.priority];
+    });
+
+  // Top 3 recommended actions (HIGH gaps first, then MEDIUM, then LOW)
+  const allGapsForActions = COVERAGES
+    .filter(c => coverageData[c.id] !== 'yes')
+    .map(c => ({ ...c, priority: priorities[c.id] }))
+    .sort((a, b) => {
+      const order = { HIGH: 0, MEDIUM: 1, LOW: 2 };
+      return order[a.priority] - order[b.priority];
+    });
+  const top3 = allGapsForActions.slice(0, 3);
+
+  // Overpaying
+  const overpayingAlerts = checkOverpaying(coverageData, profileData);
+
+  // Store results
+  auditResults = { score, priorities, gaps, top3, overpayingAlerts };
+
+  // Render
+  renderResults(score, priorities, gaps, top3, overpayingAlerts);
+
+  // Show results
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step-indicator').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER RESULTS
+// ═══════════════════════════════════════════════════════════
+
+function renderResults(score, priorities, gaps, top3, overpayingAlerts) {
+  // Score ring
+  const CIRC = 452.39;
+  const offset = CIRC * (1 - score / 100);
+  const ring = document.getElementById('ring-fill');
+  const scoreNum = document.getElementById('score-num');
+  const scoreLabel = document.getElementById('score-label');
+  const scoreSub = document.getElementById('score-sublabel');
+
+  let ringColor, labelText, subText;
+  if (score >= 71) {
+    ringColor = '#27AE60'; labelText = 'Well Protected'; subText = 'Your coverage profile is strong. Review gaps and limits with your broker.';
+  } else if (score >= 41) {
+    ringColor = '#E67E22'; labelText = 'Partial Coverage'; subText = 'Notable gaps exist. Address HIGH priority items immediately.';
+  } else {
+    ringColor = '#C0392B'; labelText = 'Significant Coverage Gaps'; subText = 'Critical coverage gaps detected. Immediate action recommended.';
+  }
+
+  ring.style.stroke = ringColor;
+  scoreLabel.style.color = ringColor;
+
+  setTimeout(() => {
+    ring.style.strokeDashoffset = offset;
+    scoreNum.textContent = score;
+    scoreLabel.textContent = labelText;
+    scoreSub.textContent = subText;
+  }, 100);
+
+  // Profile chips
+  const chipContainer = document.getElementById('profile-chips');
+  const industryLabels = {
+    retail: 'Retail', restaurant: 'Restaurant', contractor: 'Contractor',
+    professional_services: 'Professional Services', healthcare: 'Healthcare', other: 'Other'
+  };
+  const empLabels = {
+    '1': '1 Employee', '2_4': '2-4 Employees', '5_10': '5-10 Employees',
+    '11_25': '11-25 Employees', '26_50': '26-50 Employees', '50plus': '50+ Employees'
+  };
+  const revLabels = {
+    under100k: 'Under $100K', '100k_500k': '$100K-$500K', '500k_1m': '$500K-$1M',
+    '1m_5m': '$1M-$5M', '5m_plus': '$5M+'
+  };
+
+  const chips = [
+    industryLabels[profileData.industry] || profileData.industry,
+    empLabels[profileData.empTier],
+    revLabels[profileData.revTier],
+    profileData.hasLocation ? 'Physical Location' : 'No Physical Location',
+    profileData.handlesData ? 'Handles Customer Data' : 'No Customer Data',
+    profileData.hasVehicles ? 'Business Vehicles' : 'No Vehicles'
+  ];
+  chipContainer.innerHTML = chips.map(c => `<span class="chip">${c}</span>`).join('');
+
+  // Coverage status grid
+  const statusGrid = document.getElementById('cov-status-grid');
+  statusGrid.innerHTML = '';
+  COVERAGES.forEach(cov => {
+    const val = coverageData[cov.id];
+    const pri = priorities[cov.id];
+    let badgeClass, badgeText;
+    if (val === 'yes')      { badgeClass = 'badge-covered'; badgeText = 'Covered'; }
+    else if (val === 'no')  { badgeClass = 'badge-gap';     badgeText = pri === 'LOW' ? 'Not Held' : 'GAP'; }
+    else                    { badgeClass = 'badge-unclear';  badgeText = 'Unclear'; }
+
+    statusGrid.innerHTML += `
+      <div class="cov-status-item">
+        <div class="cov-status-name">${cov.name}</div>
+        <span class="cov-status-badge ${badgeClass}">${badgeText}</span>
+      </div>
+    `;
+  });
+
+  // Overpaying alert
+  if (overpayingAlerts.length > 0) {
+    document.getElementById('overpaying-alert').style.display = 'block';
+    document.getElementById('overpaying-list').innerHTML =
+      overpayingAlerts.map(a => `<li>${a}</li>`).join('');
+  } else {
+    document.getElementById('overpaying-alert').style.display = 'none';
+  }
+
+  // Gaps
+  if (gaps.length === 0) {
+    document.getElementById('all-covered-banner').style.display = 'block';
+    document.getElementById('gaps-section').style.display = 'none';
+  } else {
+    document.getElementById('all-covered-banner').style.display = 'none';
+    document.getElementById('gaps-section').style.display = 'block';
+    const gapsList = document.getElementById('gaps-list');
+    gapsList.innerHTML = '';
+    gaps.forEach(g => {
+      const priClass = 'priority-' + g.priority.toLowerCase();
+      const priBadge = 'p-' + g.priority.toLowerCase();
+      const typeBadge = g.status === 'no' ? 'gt-gap' : 'gt-unclear';
+      const typeText  = g.status === 'no' ? 'Confirmed Gap' : 'Needs Verification';
+      gapsList.innerHTML += `
+        <div class="gap-card ${priClass} ${g.status === 'not_sure' ? 'gap-unclear' : ''}">
+          <div class="gap-main">
+            <div class="gap-header">
+              <span class="gap-title">${g.name}</span>
+              <span class="priority-badge ${priBadge}">${g.priority} PRIORITY</span>
+              <span class="gap-type-badge ${typeBadge}">${typeText}</span>
+            </div>
+            <div class="gap-desc">${g.description}</div>
+            <div class="gap-premium">Est. Annual Premium: <span>${g.premiumRange}</span></div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // Top 3 actions
+  if (top3.length > 0) {
+    document.getElementById('actions-section').style.display = 'block';
+    const actionsList = document.getElementById('actions-list');
+    actionsList.innerHTML = '';
+    top3.forEach((a, i) => {
+      actionsList.innerHTML += `
+        <div class="action-card">
+          <div class="action-num">${i + 1}</div>
+          <div class="action-content">
+            <div class="action-title">${a.name}</div>
+            <div class="action-desc">${ACTION_DETAILS[a.id]}</div>
+          </div>
+        </div>
+      `;
+    });
+  } else {
+    document.getElementById('actions-section').style.display = 'none';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PDF GENERATION
+// ═══════════════════════════════════════════════════════════
+
+function generatePDF() {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+
+    function pdfSafe(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/\u2013/g, '-')
+        .replace(/\u2014/g, '-')
+        .replace(/\u00B7/g, '|')
+        .replace(/\u2019/g, "'")
+        .replace(/\u2018/g, "'")
+        .replace(/\u201C/g, '"')
+        .replace(/\u201D/g, '"')
+        .replace(/&amp;/g, '&')
+        .replace(/&gt;/g, '>')
+        .replace(/&lt;/g, '<')
+        .replace(/[^\x00-\x7F]/g, '');
+    }
+
+    const PAGE_W = 612;
+    const PAGE_H = 792;
+    const CREAM  = [250, 250, 247];
+    const GOLD   = [184, 134, 11];
+    const DARK   = [26, 26, 26];
+    const GREEN  = [39, 174, 96];
+    const RED    = [192, 57, 43];
+    const YELLOW = [230, 126, 34];
+    const GRAY   = [120, 120, 120];
+    const WHITE  = [255, 255, 255];
+    const LGRAY  = [245, 243, 239];
+
+    const { score, priorities, gaps, top3, overpayingAlerts } = auditResults;
+    const { bizName, industry, empTier, revTier, hasLocation, handlesData, hasVehicles } = profileData;
+
+    const industryLabels = {
+      retail: 'Retail', restaurant: 'Restaurant / Food Service', contractor: 'Contractor / Trades',
+      professional_services: 'Professional Services', healthcare: 'Healthcare', other: 'Other'
+    };
+    const empLabels = {
+      '1': '1 (Solo)', '2_4': '2-4', '5_10': '5-10', '11_25': '11-25', '26_50': '26-50', '50plus': '50+'
+    };
+    const revLabels = {
+      under100k: 'Under $100K', '100k_500k': '$100K-$500K', '500k_1m': '$500K-$1M',
+      '1m_5m': '$1M-$5M', '5m_plus': '$5M+'
+    };
+
+    let scoreColor, scoreText;
+    if (score >= 71)      { scoreColor = GREEN;  scoreText = 'Well Protected'; }
+    else if (score >= 41) { scoreColor = YELLOW; scoreText = 'Partial Coverage'; }
+    else                  { scoreColor = RED;    scoreText = 'Significant Coverage Gaps'; }
+
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    // ── PAGE 1: COVER + SUMMARY ──────────────────────────────────────────
+
+    doc.setFillColor(...CREAM);
+    doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
+
+    // Header
+    doc.setFillColor(...DARK);
+    doc.rect(0, 0, PAGE_W, 88, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(...GOLD);
+    doc.text(pdfSafe('TMS Solutions Group'), 40, 36);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(200, 200, 200);
+    doc.text(pdfSafe('tom@tms-solutions-group.com  |  tms-solutions-group.com  |  386-387-8620'), 40, 54);
+    doc.setFontSize(9);
+    doc.setTextColor(...GOLD);
+    doc.text(pdfSafe('FREE ASSESSMENT TOOL'), PAGE_W - 40, 36, { align: 'right' });
+
+    doc.setFillColor(...GOLD);
+    doc.rect(0, 88, PAGE_W, 3, 'F');
+
+    // Title
+    doc.setFont('times', 'bold');
+    doc.setFontSize(24);
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe('Business Insurance Coverage Audit'), PAGE_W / 2, 136, { align: 'center' });
+
+    if (bizName) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(13);
+      doc.setTextColor(...GRAY);
+      doc.text(pdfSafe(bizName), PAGE_W / 2, 158, { align: 'center' });
+    }
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(...GRAY);
+    doc.text(pdfSafe('Report Date: ' + today), PAGE_W / 2, 176, { align: 'center' });
+
+    // Score hero
+    const heroY = 196;
+    doc.setFillColor(...DARK);
+    doc.roundedRect(50, heroY, PAGE_W - 100, 72, 8, 8, 'F');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...GOLD);
+    doc.text(pdfSafe('COVERAGE GAP SCORE'), PAGE_W / 2, heroY + 22, { align: 'center' });
+
+    doc.setFont('times', 'bold');
+    doc.setFontSize(38);
+    doc.setTextColor(...scoreColor);
+    doc.text(pdfSafe(score.toString()), PAGE_W / 2 - 30, heroY + 56, { align: 'right' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(14);
+    doc.setTextColor(160, 160, 160);
+    doc.text(pdfSafe('/ 100'), PAGE_W / 2 - 24, heroY + 56);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...scoreColor);
+    doc.text(pdfSafe('-- ' + scoreText), PAGE_W / 2 + 28, heroY + 56);
+
+    // Business profile box
+    const profY = heroY + 88;
+    doc.setFillColor(...LGRAY);
+    doc.roundedRect(50, profY, PAGE_W - 100, 80, 6, 6, 'F');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe('Business Profile'), 66, profY + 18);
+
+    const profItems = [
+      ['Industry', industryLabels[industry] || industry],
+      ['Employees', empLabels[empTier]],
+      ['Revenue', revLabels[revTier]],
+      ['Physical Location', hasLocation ? 'Yes' : 'No'],
+      ['Handles Customer Data', handlesData ? 'Yes' : 'No'],
+      ['Business Vehicles', hasVehicles ? 'Yes' : 'No'],
+    ];
+
+    const col1X = 66, col2X = 200, col3X = 340, col4X = 470;
+    profItems.forEach((item, i) => {
+      const isRight = i >= 3;
+      const labelX = isRight ? col3X : col1X;
+      const valX   = isRight ? col4X : col2X;
+      const rowY   = profY + 36 + (i % 3) * 16;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...GRAY);
+      doc.text(pdfSafe(item[0] + ':'), labelX, rowY);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...DARK);
+      doc.text(pdfSafe(item[1]), valX, rowY);
+    });
+
+    // Coverage status grid (all 8)
+    const gridY = profY + 96;
+    doc.setFont('times', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe('Coverage Status Overview'), 50, gridY);
+    doc.setFillColor(...GOLD);
+    doc.rect(50, gridY + 4, 130, 2, 'F');
+
+    const cellW = (PAGE_W - 100) / 4;
+    const cellH = 36;
+    const gridStartY = gridY + 16;
+
+    COVERAGES.forEach((cov, i) => {
+      const col = i % 4;
+      const row = Math.floor(i / 4);
+      const cx = 50 + col * cellW;
+      const cy = gridStartY + row * (cellH + 4);
+
+      doc.setFillColor(...WHITE);
+      doc.setDrawColor(230, 228, 222);
+      doc.roundedRect(cx + 2, cy, cellW - 4, cellH, 4, 4, 'FD');
+
+      const val = coverageData[cov.id];
+      let statusText, statusColor;
+      if (val === 'yes') {
+        statusText = 'Covered'; statusColor = GREEN;
+      } else if (val === 'no') {
+        const pri = priorities[cov.id];
+        statusText = pri === 'LOW' ? 'Not Held' : 'GAP'; statusColor = RED;
+      } else {
+        statusText = 'Unclear'; statusColor = YELLOW;
+      }
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...DARK);
+      doc.text(pdfSafe(cov.name), cx + cellW / 2, cy + 13, { align: 'center', maxWidth: cellW - 10 });
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(...statusColor);
+      doc.text(pdfSafe(statusText), cx + cellW / 2, cy + 27, { align: 'center' });
+    });
+
+    // Overpaying on page 1 (if any, compact)
+    const afterGridY = gridStartY + 2 * (cellH + 4) + 16;
+    let p1Y = afterGridY;
+
+    if (overpayingAlerts.length > 0 && p1Y < PAGE_H - 80) {
+      doc.setFillColor(255, 248, 225);
+      doc.setDrawColor(...YELLOW);
+      doc.roundedRect(50, p1Y, PAGE_W - 100, 16 + overpayingAlerts.length * 14, 4, 4, 'FD');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(160, 100, 0);
+      doc.text(pdfSafe('!! Possible Overpaying Alert'), 62, p1Y + 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(80, 60, 20);
+      overpayingAlerts.forEach((alert, i) => {
+        const lines = doc.splitTextToSize(pdfSafe('- ' + alert), PAGE_W - 130);
+        doc.text(lines[0], 62, p1Y + 24 + i * 14);
+      });
+    }
+
+    // Footer P1
+    doc.setFillColor(...DARK);
+    doc.rect(0, PAGE_H - 34, PAGE_W, 34, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...GRAY);
+    doc.text(pdfSafe('tom@tms-solutions-group.com  |  tms-solutions-group.com  |  386-387-8620  |  Page 1 of 2'), PAGE_W / 2, PAGE_H - 13, { align: 'center' });
+
+    // ── PAGE 2: GAPS + RECOMMENDATIONS ──────────────────────────────────
+
+    doc.addPage();
+    doc.setFillColor(...CREAM);
+    doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
+
+    // Header
+    doc.setFillColor(...DARK);
+    doc.rect(0, 0, PAGE_W, 68, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(15);
+    doc.setTextColor(...GOLD);
+    doc.text(pdfSafe('TMS Solutions Group'), 40, 28);
+    doc.setFont('times', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(255, 255, 255);
+    doc.text(pdfSafe('Business Insurance Coverage Audit -- Gaps & Recommendations'), 40, 50);
+    doc.setFillColor(...GOLD);
+    doc.rect(0, 68, PAGE_W, 3, 'F');
+
+    let y2 = 96;
+
+    // Gaps section
+    if (gaps.length > 0) {
+      doc.setFont('times', 'bold');
+      doc.setFontSize(13);
+      doc.setTextColor(...DARK);
+      doc.text(pdfSafe('Coverage Gaps & Uncertainties'), 40, y2);
+      doc.setFillColor(...GOLD);
+      doc.rect(40, y2 + 4, 140, 2, 'F');
+      y2 += 22;
+
+      gaps.forEach((gap, i) => {
+        let priColor;
+        if (gap.priority === 'HIGH')   priColor = RED;
+        else if (gap.priority === 'MEDIUM') priColor = YELLOW;
+        else priColor = GREEN;
+
+        const statusLabel = gap.status === 'no' ? 'Confirmed Gap' : 'Needs Verification';
+
+        // Row background
+        const rowBg = i % 2 === 0 ? WHITE : [248, 246, 242];
+        doc.setFillColor(...rowBg);
+        doc.setDrawColor(230, 228, 222);
+        doc.roundedRect(40, y2, PAGE_W - 80, 38, 4, 4, 'FD');
+
+        // Left priority bar
+        doc.setFillColor(...priColor);
+        doc.rect(40, y2, 5, 38, 'F');
+
+        // Coverage name
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9.5);
+        doc.setTextColor(...DARK);
+        doc.text(pdfSafe(gap.name), 54, y2 + 13);
+
+        // Priority badge
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(7.5);
+        doc.setTextColor(...priColor);
+        doc.text(pdfSafe('[' + gap.priority + ' PRIORITY]'), 54, y2 + 26);
+
+        // Status
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.5);
+        doc.setTextColor(...GRAY);
+        doc.text(pdfSafe(statusLabel), 54 + doc.getTextWidth(pdfSafe('[' + gap.priority + ' PRIORITY]')) + 8, y2 + 26);
+
+        // Premium range
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8.5);
+        doc.setTextColor(...GOLD);
+        doc.text(pdfSafe('Est: ' + gap.premiumRange), PAGE_W - 52, y2 + 13, { align: 'right' });
+
+        // Description (truncated)
+        const descLines = doc.splitTextToSize(pdfSafe(gap.description), PAGE_W - 220);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.5);
+        doc.setTextColor(80, 80, 80);
+        doc.text(descLines[0], 54, y2 + 33);
+
+        y2 += 42;
+        if (y2 > PAGE_H - 200) { y2 = PAGE_H - 200; } // Safety cap
+      });
+    } else {
+      doc.setFillColor(212, 237, 218);
+      doc.roundedRect(40, y2, PAGE_W - 80, 36, 4, 4, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(21, 87, 36);
+      doc.text(pdfSafe('No critical coverage gaps identified. Strong coverage profile based on your inputs.'), PAGE_W / 2, y2 + 22, { align: 'center' });
+      y2 += 50;
+    }
+
+    // Top 3 Actions
+    y2 += 12;
+    doc.setFont('times', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe('Top 3 Recommended Actions'), 40, y2);
+    doc.setFillColor(...GOLD);
+    doc.rect(40, y2 + 4, 140, 2, 'F');
+    y2 += 22;
+
+    const actionsToShow = top3.length > 0 ? top3 : [];
+    if (actionsToShow.length === 0) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...GRAY);
+      doc.text(pdfSafe('No priority actions identified. Schedule a review with your broker to confirm adequate limits.'), 40, y2);
+      y2 += 20;
+    } else {
+      actionsToShow.forEach((action, i) => {
+        // Number circle
+        doc.setFillColor(...DARK);
+        doc.circle(52, y2 + 10, 10, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...GOLD);
+        doc.text(pdfSafe((i + 1).toString()), 52, y2 + 14, { align: 'center' });
+
+        // Action title
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9.5);
+        doc.setTextColor(...DARK);
+        doc.text(pdfSafe(action.name), 70, y2 + 10);
+
+        // Action detail
+        const detailLines = doc.splitTextToSize(pdfSafe(ACTION_DETAILS[action.id]), PAGE_W - 120);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8.5);
+        doc.setTextColor(70, 70, 70);
+        const maxLines = Math.min(detailLines.length, 2);
+        for (let l = 0; l < maxLines; l++) {
+          doc.text(pdfSafe(detailLines[l]), 70, y2 + 22 + l * 12);
+        }
+
+        y2 += 50;
+        if (y2 > PAGE_H - 180) { y2 = PAGE_H - 180; }
+      });
+    }
+
+    // Disclaimer
+    const discY = PAGE_H - 130;
+    doc.setFillColor(...LGRAY);
+    doc.roundedRect(40, discY, PAGE_W - 80, 64, 4, 4, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...GRAY);
+    doc.text(pdfSafe('Disclaimer'), 52, discY + 14);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    const discLines = doc.splitTextToSize(
+      pdfSafe('This audit is for educational and informational purposes only. Results are based on self-reported inputs and do not constitute insurance advice. Coverage requirements, exclusions, and premium costs vary by state, industry, carrier, and individual circumstances. This tool does not replace the advice of a licensed insurance broker or agent. Consult a qualified insurance professional before making coverage decisions.'),
+      PAGE_W - 110
+    );
+    discLines.forEach((line, i) => {
+      if (i < 4) doc.text(pdfSafe(line), 52, discY + 26 + i * 11);
+    });
+
+    // CTA
+    const ctaY = PAGE_H - 58;
+    doc.setFillColor(...GOLD);
+    doc.roundedRect(40, ctaY, PAGE_W - 80, 30, 5, 5, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9.5);
+    doc.setTextColor(...DARK);
+    doc.text(pdfSafe('Ready to close your coverage gaps? Contact TMS Solutions Group today.'), PAGE_W / 2, ctaY + 12, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.text(pdfSafe('tom@tms-solutions-group.com  |  tms-solutions-group.com  |  386-387-8620'), PAGE_W / 2, ctaY + 24, { align: 'center' });
+
+    // Footer P2
+    doc.setFillColor(...DARK);
+    doc.rect(0, PAGE_H - 34, PAGE_W, 34, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...GRAY);
+    doc.text(pdfSafe('tom@tms-solutions-group.com  |  tms-solutions-group.com  |  386-387-8620  |  Page 2 of 2'), PAGE_W / 2, PAGE_H - 13, { align: 'center' });
+
+    // Save
+    const safeName = bizName
+      ? bizName.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '-').substring(0, 40)
+      : 'Report';
+    doc.save(pdfSafe('TMS-Insurance-Coverage-Audit-' + safeName + '.pdf'));
+
+  } catch (err) {
+    console.error('PDF generation error:', err);
+    alert('PDF generation failed: ' + err.message);
+  }
+}
+</script>
+</body>
+</html>
