@@ -20,8 +20,8 @@
 
     /* Header */
     header {
-      background: #FAF6EE;
-      color: #1a1a1a;
+      background: #1a1a1a;
+      color: #FAFAF7;
       padding: 16px 32px;
       display: flex;
       align-items: center;
@@ -30,7 +30,8 @@
       gap: 8px;
     }
     header .brand { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #B8860B; }
-    header .contact { font-size: 0.8rem; color: #666; }
+    header .contact { font-size: 0.8rem; color: #aaa; }
+    .brand-logo-wrap { background: #fff; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; }
     .brand-logo { height: 44px; width: auto; display: block; object-fit: contain; }
 
     main {
@@ -494,7 +495,7 @@
 <body>
 
 <header>
-  <img src="/images/tms-logo.png" alt="TMS Solutions Group" class="brand-logo" />
+  <div class="brand-logo-wrap"><img src="/images/tms-logo.png" alt="TMS Solutions Group" class="brand-logo" /></div>
   <div class="contact">tom@tms-solutions-group.com &nbsp;|&nbsp; 386-387-8620</div>
 </header>
 
